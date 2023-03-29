@@ -8,15 +8,16 @@ class Observer{
 };
 
 class MaxMetrics : public Observer {
+    int max_;
  public:
-    void notify(int value_)
+    MaxMetrics() : max_(0){}
+    void notify(int value)
     {
-      int max = value_;
-      if(value_ >= max)
+      if(value > max_)
       {
-        int max = value_;
+        max_ = value;
       }
-      std::cout << "MaxMetric:" << max << std::endl;
+      std::cout << "MaxMetric:" << max_ << std::endl;
     }
 };
 
@@ -26,7 +27,7 @@ class ObserverManager {
     observers_.push_back(o);
   }
 
-  void handle(int value) { // вызов notify в каждом наследнике observer
+  void handle(int value) { 
     for (auto observer : observers_) {
       observer->notify(value);
     }
@@ -38,23 +39,28 @@ class ObserverManager {
 
 class reader
 {
+    int value_;
  public:
     reader()
     {
-      manager.registerMetric(std::shared_ptr<Observer>(new MaxMetrics())); //до цикла
+      manager.registerMetric(std::shared_ptr<Observer>(new MaxMetrics())); 
       while(true)
       {
         std::string value; //числа либо команда show_all или show_max
         std::cin >> value; 
-        if (value.compare("show_max") == 0)
+        
+        if (value.compare("show_max") != 0)
         { 
           char* val = const_cast<char*>(value.c_str());
-          int value_ = std::atoi(val); 
+          value_ = std::atoi(val);
+        }
+        else
+        {
           manager.handle(value_);
         }
       }
     }
-    ObserverManager manager = ObserverManager(); //как поле класса
+    ObserverManager manager = ObserverManager();
 };
 
 int main()
