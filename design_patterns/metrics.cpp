@@ -61,7 +61,7 @@ class ObserverManager
   {
     if(metric.compare("max") == 0)
     {
-      observers_.begin()->notify(value);
+        observers_.begin()->notify(value);
     }
   }
 
@@ -76,7 +76,11 @@ class reader
  public:
   reader()
   {
+    // manager.registerMetric(std::shared_ptr<Observer>(new MaxMetrics())); 
+    // std::list<std::shared_ptr<Observer>>* observer = &MaxMetrics;
+    manager.registerMetric(std::shared_ptr<Observer>(new MinMetrics())); 
     manager.registerMetric(std::shared_ptr<Observer>(new MaxMetrics())); 
+
     while(true)
     {
       std::string value; 
@@ -88,12 +92,13 @@ class reader
       if (value.compare("show_max") == 0)
       { 
         std::string metric = "max";
-        manager.handle(value_, metric);
+        manager.handle(value_, metric); 
       }
 
       if (value.compare("show_min") == 0)
       {
-
+        std::string metric = "min";
+        manager.handle(value_, metric); 
       }
 
       if (value.compare("show_all") == 0)
